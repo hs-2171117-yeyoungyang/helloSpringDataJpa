@@ -5,6 +5,7 @@ import kr.ac.hansung.cse.hellospringdatajpa.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,50 +15,50 @@ import java.util.List;
 public class ProductController {
 
     @Autowired
-    private ProductService service;
+    private ProductService productService;
 
-    @GetMapping({"", "/"}) // products 또는 /products/ 둘 다 매핑
+    // 상품 목록
+    @GetMapping
     public String viewHomePage(Model model) {
-
-        List<Product> listProducts = service.listAll();
+        List<Product> listProducts = productService.listAll();
         model.addAttribute("listProducts", listProducts);
-
         return "index";
     }
 
+    // 등록 폼
     @GetMapping("/new")
-    public String showNewProductPage(Model model) {
-
-        Product product = new Product(); // 새로운 객체
-        model.addAttribute("product", product);
-
+    public String showNewForm(Model model) {
+        model.addAttribute("product", new Product());
         return "new_product";
     }
 
-    @GetMapping("/edit/{id}")
-    public String showEditProductPage(@PathVariable(name = "id") Long id, Model model) {
-
-        Product product = service.get(id);
-        model.addAttribute("product", product);
-
-        return "edit_product";
-    }
-
-    // @ModelAttribute는  Form data (예: name=Laptop&brand=Samsung&madeIn=Korea&price=1000.00)를 Product 객체
-    // @RequestBody는 HTTP 요청 본문에 포함된
-    //  JSON 데이터(예: {"name": "Laptop", "brand": "Samsung", "madeIn": "Korea", "price": 1000.00})를 Product 객체에 매핑
+    // 등록/수정 처리
     @PostMapping("/save")
-    public String saveProduct(@ModelAttribute("product") Product product) {
-
-        service.save(product);
-
+    public String saveProduct(@ModelAttribute("product") Product product, BindingResult result, Model model) {
+        if (product.getPrice() < 0) {
+            result.rejectValue("price", "error.product", "가격은 0 이상이어야 합니다.");
+            if (product.getId() == null) {
+                return "new_product";
+            } else {
+                return "edit_product";
+            }
+        }
+        productService.save(product);
         return "redirect:/products";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteProduct(@PathVariable(name = "id") Long id) {
+    // 수정 폼
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable("id") Long id, Model model) {
+        Product product = productService.get(id);
+        model.addAttribute("product", product);
+        return "edit_product";
+    }
 
-        service.delete(id);
+    // 삭제
+    @GetMapping("/delete/{id}")
+    public String deleteProduct(@PathVariable("id") Long id) {
+        productService.delete(id);
         return "redirect:/products";
     }
 }

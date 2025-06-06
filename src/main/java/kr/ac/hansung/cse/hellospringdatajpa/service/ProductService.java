@@ -16,21 +16,23 @@ public class ProductService {
     @Autowired
     private ProductRepository repo;
 
-    public Product get(long id) {
-        // 값이 없을 경우 exception 처리
-        return repo.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Product not found with id: " + id));
-    }
-
     public List<Product> listAll() {
         return repo.findAll();
     }
 
+    public Product get(Long id) {
+        return repo.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Product not found with id: " + id));
+    }
+
     public void save(Product product) {
+        if (product.getPrice() < 0) {
+            throw new IllegalArgumentException("가격은 0 이상이어야 합니다.");
+        }
         repo.save(product);
     }
 
-    public void delete(long id) {
+    public void delete(Long id) {
         repo.deleteById(id);
     }
 }
