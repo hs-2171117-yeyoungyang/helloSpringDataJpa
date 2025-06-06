@@ -21,6 +21,6 @@ public class AdminController {
     public String listUsers(Model model) {
         List<MyUser> users = userRepository.findAll();
         model.addAttribute("users", users);
-        return "adminhome";
+        return "admin/user_list";
     }
 }
