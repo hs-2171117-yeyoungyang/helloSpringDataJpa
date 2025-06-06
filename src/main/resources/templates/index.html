@@ -8,10 +8,20 @@
 </head>
 <body>
 <div class="container">
+
+  <!-- 로그아웃 버튼 (모든 사용자) -->
+  <div class="text-end mb-3">
+    <form th:action="@{/logout}" method="post" style="display: inline;">
+      <button type="submit" class="btn btn-outline-secondary">로그아웃</button>
+    </form>
+  </div>
+
   <h1 class="mt-5">Product List</h1>
 
-  <div sec:authorize="hasRole('ROLE_ADMIN')">
-    <a class="btn btn-primary mb-3" th:href="@{/products/new}">Create New Product</a>
+  <!-- 관리자만 보이는 관리자 페이지, 상품 등록 버튼 -->
+  <div sec:authorize="hasRole('ROLE_ADMIN')" class="mb-3">
+    <a class="btn btn-warning" th:href="@{/admin/users}">관리자 페이지 (유저 목록)</a>
+    <a class="btn btn-primary" th:href="@{/products/new}">Create New Product</a>
   </div>
 
   <table class="table table-bordered">
