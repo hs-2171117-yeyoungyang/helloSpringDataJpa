@@ -7,6 +7,11 @@ insert into my_user (email, password) values ('admin@test.com', '$2a$12$rhUddFKT
 insert into user_roles (user_id, role_id)
 select u.id, r.id from my_user u, my_role r where u.email = 'admin@test.com' and r.name = 'ROLE_ADMIN';
 
+-- 일반 사용자 계정 생성
+insert into my_user (email, password) values ('user1@test.com', '$2a$12$xqxjPJDr8ZSd5IqAMCyWYu/XMhWycOLOie0ms4w.j7a87IqYUh75q');
+insert into user_roles (user_id, role_id)
+select u.id, r.id from my_user u, my_role r where u.email = 'user1@test.com' and r.name = 'ROLE_USER';
+
 -- Product 샘플 데이터
 insert into product (name, brand, made_in, price) values ('Galaxy S6', 'Samsung Corp', 'Korea', 600.0);
 insert into product (name, brand, made_in, price) values ('Galaxy S8', 'Samsung Corp', 'Korea', 800.0);
